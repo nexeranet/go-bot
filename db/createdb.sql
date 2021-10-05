@@ -6,10 +6,15 @@ create table budget(
 create table category(
     codename varchar(255) primary key,
     name varchar(255),
-    is_base_expense boolean,
-    aliases text
+    is_base_expense boolean
 );
 
+--  create table alias(
+  --  id integer primary key,
+  --  text varchar(255),
+  --  category_codename integer,
+  --  FOREIGN KEY(category_codename) REFERENCES category(codename)
+--  )
 create table expense(
     id integer primary key,
     amount integer,
@@ -19,18 +24,18 @@ create table expense(
     FOREIGN KEY(category_codename) REFERENCES category(codename)
 );
 
-insert into category (codename, name, is_base_expense, aliases)
+insert into category (codename, name, is_base_expense)
 values
-    ("products", "продукты", true, "еда"),
-    ("coffee", "кофе", true, ""),
-    ("dinner", "обед", true, "столовая, ланч, бизнес-ланч, бизнес ланч"),
-    ("cafe", "кафе", true, "ресторан, рест, мак, макдональдс, макдак, kfc, ilpatio, il patio"),
-    ("transport", "общ. транспорт", false, "метро, автобус, metro"),
-    ("taxi", "такси", false, "яндекс такси, yandex taxi"),
-    ("phone", "телефон", false, "теле2, связь"),
-    ("books", "книги", false, "литература, литра, лит-ра"),
-    ("internet", "интернет", false, "инет, inet"),
-    ("subscriptions", "подписки", false, "подписка"),
-    ("other", "прочее", true, "");
+    ("products", "продукты", true),
+    ("coffee", "кофе", true),
+    ("dinner", "обед", true),
+    ("cafe", "кафе", true),
+    ("transport", "общ. транспорт", false),
+    ("taxi", "такси", false),
+    ("phone", "телефон", false),
+    ("books", "книги", false),
+    ("internet", "интернет", true),
+    ("subscriptions", "подписки", false),
+    ("other", "прочее", true);
 
 insert into budget(codename, daily_limit) values ('base', 500);

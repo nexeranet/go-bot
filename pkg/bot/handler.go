@@ -1,4 +1,4 @@
-package service
+package bot
 
 import (
 	"reflect"
@@ -10,7 +10,7 @@ import (
 type HandlerIntr interface {
 	Validate(update *tgbotapi.Update) bool
 	Notify(update *tgbotapi.Update) interface{}
-	Setup() bool
+	Setup()
 }
 
 type Handler struct {
@@ -25,6 +25,11 @@ func (h *Handler) Validate(update *tgbotapi.Update) bool {
 		return update.Message.Command() == h.command
 	}
 	return strings.Contains(update.Message.Text, h.command)
+	// valid, err := regexp.MatchString(`\s+?`+h.command+`\s+?`, update.Message.Text)
+	// if err != nil {
+	// panic(err.Error())
+	// }
+	//return valid
 }
 func (h *Handler) Notify(update *tgbotapi.Update) interface{} {
 	v := reflect.ValueOf(h.callback)
