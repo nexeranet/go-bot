@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"os"
+	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/joho/godotenv"
@@ -40,8 +41,16 @@ func main() {
 	}
 	cBot := bot.NewBot(tgbot)
 	handler.InitBotHandlers(cBot, repos)
+	userId := os.Getenv("TELEGRAM_ID")
+	id, err := strconv.ParseInt(userId, 10, 64)
+	if err != nil {
+		log.Panic("Error env TELEGRAM_ID empty or not number")
+	}
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message updates
+			continue
+		}
+		if update.Message.Chat.ID != id {
 			continue
 		}
 		err := cBot.Notify(&update)

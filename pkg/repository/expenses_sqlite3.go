@@ -44,7 +44,22 @@ func (e *ExpensesSqlite3) Delete(id int) error {
 	return nil
 }
 
-func (e *ExpensesSqlite3) GetByTime(timeUnix int) ([]go_bot.Expense, error) {
+func (e *ExpensesSqlite3) GetByTime(timeUnix int64) ([]go_bot.Expense, error) {
 	var expenses []go_bot.Expense
+	query := "SELECT id, amount, created, category_codename FROM expense WHERE created >= $1"
+	rows, err := e.db.Query(query, timeUnix)
+	if err != nil {
+		return expenses, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var exp go_bot.Expense
+		err = rows.Scan(&exp.Id, &exp.Amount, &exp.Created, &exp.CategoryCodename)
+		if err != nil {
+			return expenses, err
+		}
+		expenses = append(expenses, exp)
+	}
 	return expenses, nil
 }

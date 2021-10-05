@@ -15,6 +15,9 @@ func InitBotHandlers(bot *bot.Bot, repos *repository.Repository) {
 		str := "Бот для учёта финансов\n\nДобавить расход: 250 такси\nСегодняшняя статистика: /today\nЗа текущий месяц: /month\nПоследние внесённые расходы: /expenses\nКатегории трат: /categories"
 		bot.Send(str, update)
 	})
+	bot.AddHandler("/today", func(update *tgbotapi.Update) {
+		GetTodayStatisticse(bot, repos, update)
+	})
 	bot.AddHandler("/category", func(update *tgbotapi.Update) {
 		GetCategoryByName(bot, repos, update)
 	})

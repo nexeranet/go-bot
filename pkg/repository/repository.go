@@ -9,7 +9,7 @@ import (
 type Expenses interface {
 	Create(category string, amount int, raw_text string) (go_bot.Expense, error)
 	Delete(id int) error
-	GetByTime(timeUnix int) ([]go_bot.Expense, error)
+	GetByTime(timeUnix int64) ([]go_bot.Expense, error)
 }
 
 type Category interface {

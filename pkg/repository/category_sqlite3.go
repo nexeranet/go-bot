@@ -31,6 +31,7 @@ func (c *CategorySqlite3) GetAll() ([]go_bot.Category, error) {
 	if err != nil {
 		return categories, err
 	}
+	defer rows.Close()
 	for rows.Next() {
 		var ctg go_bot.Category
 		err = rows.Scan(&ctg.Codename, &ctg.Name, &ctg.IsBaseExpense)
