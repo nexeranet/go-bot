@@ -7,10 +7,14 @@ import (
 )
 
 type Expenses interface {
+	Create(category string, amount int, raw_text string) (go_bot.Expense, error)
+	Delete(id int) error
+	GetByTime(timeUnix int) ([]go_bot.Expense, error)
 }
 
 type Category interface {
 	GetOne(string) (go_bot.Category, error)
+	GetAll() ([]go_bot.Category, error)
 }
 
 type Repository struct {

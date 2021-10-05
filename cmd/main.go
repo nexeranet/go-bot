@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/nexeranet/go-bot/pkg/bot"
+	"github.com/nexeranet/go-bot/pkg/handler"
 	"github.com/nexeranet/go-bot/pkg/repository"
 )
 
@@ -38,7 +39,7 @@ func main() {
 		log.Panic("Error on Get Updates Chan")
 	}
 	cBot := bot.NewBot(tgbot)
-	bot.InitBotHandlers(cBot, repos)
+	handler.InitBotHandlers(cBot, repos)
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message updates
 			continue

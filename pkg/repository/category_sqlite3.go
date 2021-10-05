@@ -24,3 +24,20 @@ func (c *CategorySqlite3) GetOne(name string) (go_bot.Category, error) {
 	}
 	return category, nil
 }
+func (c *CategorySqlite3) GetAll() ([]go_bot.Category, error) {
+	var categories []go_bot.Category
+	query := "SELECT codename, name, is_base_expense FROM category"
+	rows, err := c.db.Query(query)
+	if err != nil {
+		return categories, err
+	}
+	for rows.Next() {
+		var ctg go_bot.Category
+		err = rows.Scan(&ctg.Codename, &ctg.Name, &ctg.IsBaseExpense)
+		if err != nil {
+			return categories, err
+		}
+		categories = append(categories, ctg)
+	}
+	return categories, nil
+}
