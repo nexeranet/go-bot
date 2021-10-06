@@ -40,7 +40,9 @@ func main() {
 		log.Panic("Error on Get Updates Chan")
 	}
 	cBot := bot.NewBot(tgbot)
-	handler.InitBotHandlers(cBot, repos)
+	handl := handler.NewHandler(cBot, repos)
+	handl.InitBotHandlers()
+
 	userId := os.Getenv("TELEGRAM_ID")
 	id, err := strconv.ParseInt(userId, 10, 64)
 	if err != nil {

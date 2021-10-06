@@ -5,8 +5,6 @@ import (
 	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/nexeranet/go-bot/pkg/bot"
-	"github.com/nexeranet/go-bot/pkg/repository"
 )
 
 /**
@@ -27,46 +25,46 @@ func getParams(regEx, url string) (paramsMap map[string]string) {
 	}
 	return paramsMap
 }
-func CreateExpense(bot *bot.Bot, repos *repository.Repository, update *tgbotapi.Update) {
+func (h *Handler) CreateExpense(update *tgbotapi.Update) {
 	group := getParams(`(?P<Amount>[\d ]+) (?P<Category>.*)`, update.Message.Text)
 	if group["Category"] == "" || group["Amount"] == "" {
-		bot.Send("Invalid arguments", update)
+		h.bot.Send("Invalid arguments", update)
 		return
 	}
 	amount, err := strconv.Atoi(group["Amount"])
 	if err != nil {
-		bot.Send("Invalid arguments", update)
+		h.bot.Send("Invalid arguments", update)
 		return
 	}
-	category, err := repos.Category.GetOne(group["Category"])
+	category, err := h.repos.Category.GetOne(group["Category"])
 	if err != nil {
 		category.Codename = "other"
 	}
-	_, errs := repos.Expenses.Create(category.Codename, amount, update.Message.Text)
+	_, errs := h.repos.Expenses.Create(category.Codename, amount, update.Message.Text)
 	if errs != nil {
-		bot.Send(errs.Error(), update)
+		h.bot.Send(errs.Error(), update)
 		return
 	}
-	bot.Send("Success", update)
+	h.bot.Send("Success", update)
 }
 
-func DeleteExpense(bot *bot.Bot, repos *repository.Repository, update *tgbotapi.Update) {
+func (h *Handler) DeleteExpense(update *tgbotapi.Update) {
 	argString := update.Message.CommandArguments()
 	if argString == "" {
-		bot.Send("No arguments", update)
+		h.bot.Send("No arguments", update)
 		return
 	}
 	group := getParams(`(?P<Id>[\d ]+)`, argString)
 
 	id, err := strconv.Atoi(group["Id"])
 	if err != nil {
-		bot.Send("Invalid arguments", update)
+		h.bot.Send("Invalid arguments", update)
 		return
 	}
-	err = repos.Expenses.Delete(id)
+	err = h.repos.Expenses.Delete(id)
 	if err != nil {
-		bot.Send(err.Error(), update)
+		h.bot.Send(err.Error(), update)
 		return
 	}
-	bot.Send("Удалил", update)
+	h.bot.Send("Удалил", update)
 }

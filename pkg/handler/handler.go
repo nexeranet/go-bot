@@ -7,30 +7,34 @@ import (
 	"github.com/nexeranet/go-bot/pkg/repository"
 )
 
-func InitBotHandlers(bot *bot.Bot, repos *repository.Repository) {
-	bot.AddHandler("hello", func(update *tgbotapi.Update) {
-		bot.Send("Hello", update)
-	})
-	bot.AddHandler("/start", func(update *tgbotapi.Update) {
-		str := "Бот для учёта финансов\n\nДобавить расход: 250 такси\nСегодняшняя статистика: /today\nЗа текущий месяц: /month\nПоследние внесённые расходы: /expenses\nКатегории трат: /categories"
-		bot.Send(str, update)
-	})
-	bot.AddHandler("/today", func(update *tgbotapi.Update) {
-		GetTodayStatisticse(bot, repos, update)
-	})
-	bot.AddHandler("/category", func(update *tgbotapi.Update) {
-		GetCategoryByName(bot, repos, update)
-	})
-	bot.AddHandler("/categories", func(update *tgbotapi.Update) {
-		GetCategories(bot, repos, update)
-	})
-	bot.AddHandler("/del", func(update *tgbotapi.Update) {
-		DeleteExpense(bot, repos, update)
-	})
-	bot.SetDefaultHandler(func(update *tgbotapi.Update) {
+type Handler struct {
+	bot   *bot.Bot
+	repos *repository.Repository
+}
+
+func NewHandler(bot *bot.Bot, repos *repository.Repository) *Handler {
+	return &Handler{
+		bot:   bot,
+		repos: repos,
+	}
+}
+
+func (h *Handler) StartCommand(update *tgbotapi.Update) {
+	str := "Бот для учёта финансов\n\nДобавить расход: 250 такси\nСегодняшняя статистика: /today\nЗа текущий месяц: /month\nПоследние внесённые расходы: /expenses\nКатегории трат: /categories"
+	h.bot.Send(str, update)
+}
+
+func (h *Handler) InitBotHandlers() {
+	h.bot.AddHandler("/start", h.StartCommand)
+	h.bot.AddHandler("/today", h.GetTodayStatistics)
+	h.bot.AddHandler("/month", h.GetMonthStatistics)
+	h.bot.AddHandler("/category", h.GetCategoryByName)
+	h.bot.AddHandler("/categories", h.GetCategories)
+	h.bot.AddHandler("/del", h.DeleteExpense)
+	h.bot.SetDefaultHandler(func(update *tgbotapi.Update) {
 		if update.Message.IsCommand() {
 			return
 		}
-		CreateExpense(bot, repos, update)
+		h.CreateExpense(update)
 	})
 }

@@ -12,3 +12,16 @@ type Category struct {
 	Name          string `db:"name"`
 	IsBaseExpense bool   `db:"is_base_expense"`
 }
+
+type Alias struct {
+	Id               int    `db:"id"`
+	CategoryCodename string `db:"category_codename"`
+	Text             string `db:"text"`
+}
+type ExpenseWCN struct {
+	Id               int    `db:"id"`
+	Amount           int    `db:"amount"`
+	Created          string `db:"created"`
+	CategoryCodename string `db:"category_codename"`
+	CategoryName     string `db:"category_name"`
+}
