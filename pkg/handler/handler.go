@@ -28,9 +28,12 @@ func (h *Handler) InitBotHandlers() {
 	h.bot.AddHandler("/start", h.StartCommand)
 	h.bot.AddHandler("/today", h.GetTodayStatistics)
 	h.bot.AddHandler("/month", h.GetMonthStatistics)
+	h.bot.AddHandler("/expenses", h.GetExpensesStatistics)
 	h.bot.AddHandler("/category", h.GetCategoryByName)
 	h.bot.AddHandler("/categories", h.GetCategories)
 	h.bot.AddHandler("/del", h.DeleteExpense)
+	h.bot.AddHandler("/del_alias", h.DeleteAlias)
+	h.bot.AddHandler("/add_alias", h.CreateAlias)
 	h.bot.SetDefaultHandler(func(update *tgbotapi.Update) {
 		if update.Message.IsCommand() {
 			return

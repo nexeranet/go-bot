@@ -63,3 +63,22 @@ func (e *ExpensesSqlite3) GetByTime(timeUnix int64) ([]go_bot.ExpenseWCN, error)
 	}
 	return expenses, nil
 }
+func (e *ExpensesSqlite3) GetByTimeByGroup(timeUnix int64) ([]go_bot.ExpenseWCN, error) {
+	var expenses []go_bot.ExpenseWCN
+	query := "SELECT id, SUM(amount) as sum, created, category_codename, name FROM expense INNER jOIN category on category.codename= expense.category_codename WHERE created >= $1 GROUP BY category_codename"
+	rows, err := e.db.Query(query, timeUnix)
+	if err != nil {
+		return expenses, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var exp go_bot.ExpenseWCN
+		err = rows.Scan(&exp.Id, &exp.Amount, &exp.Created, &exp.CategoryCodename, &exp.CategoryName)
+		if err != nil {
+			return expenses, err
+		}
+		expenses = append(expenses, exp)
+	}
+	return expenses, nil
+}

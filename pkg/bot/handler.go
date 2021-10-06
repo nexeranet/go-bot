@@ -33,8 +33,11 @@ func (h *Handler) Validate(update *tgbotapi.Update) bool {
 }
 func (h *Handler) Notify(update *tgbotapi.Update) interface{} {
 	v := reflect.ValueOf(h.callback)
-	vargs := make([]reflect.Value, 1)
-	vargs[0] = reflect.ValueOf(update)
+	t := reflect.TypeOf(h.callback)
+	vargs := make([]reflect.Value, t.NumIn())
+	for key := range vargs {
+		vargs[key] = reflect.ValueOf(update)
+	}
 	return v.Call(vargs)
 }
 func (h *Handler) Setup() {
