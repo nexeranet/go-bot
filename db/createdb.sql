@@ -9,12 +9,13 @@ create table category(
     is_base_expense boolean
 );
 
---  create table alias(
-  --  id integer primary key,
-  --  text varchar(255),
-  --  category_codename integer,
-  --  FOREIGN KEY(category_codename) REFERENCES category(codename)
---  )
+create table alias(
+  id integer primary key,
+  text varchar(255),
+  category_codename integer,
+  FOREIGN KEY(category_codename) REFERENCES category(codename)
+);
+
 create table expense(
     id integer primary key,
     amount integer,
@@ -39,3 +40,16 @@ values
     ("other", "прочее", true);
 
 insert into budget(codename, daily_limit) values ('base', 500);
+insert into alias(category_codename, text) 
+values
+    ("products", "продукты"),
+    ("coffee", "кофе"),
+    ("dinner", "обед"),
+    ("cafe", "кафе"),
+    ("transport", "общ. транспорт"),
+    ("taxi", "такси"),
+    ("phone", "телефон"),
+    ("books", "книги"),
+    ("internet", "интернет"),
+    ("subscriptions", "подписки"),
+    ("other", "прочее");
