@@ -41,3 +41,22 @@ func (h *Handler) GetCategories(update *tgbotapi.Update) {
 	}
 	h.bot.Send(msg, update)
 }
+
+func (h *Handler) DeleteCategory(update *tgbotapi.Update) {
+	argString := update.Message.CommandArguments()
+	if argString == "" {
+		h.bot.Send("No arguments", update)
+		return
+	}
+	group := getParams(`(?P<Codename>[\w ]*)`, argString)
+	if group["Codename"] == "" {
+		h.bot.Send("Invalid arguments", update)
+		return
+	}
+	err := h.repos.Category.Delete(group["Codename"])
+	if err != nil {
+		h.bot.Send(err.Error(), update)
+		return
+	}
+	h.bot.Send("Удалил", update)
+}

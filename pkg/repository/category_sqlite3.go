@@ -42,3 +42,25 @@ func (c *CategorySqlite3) GetAll() ([]go_bot.Category, error) {
 	}
 	return categories, nil
 }
+func (c *CategorySqlite3) Delete(codename string) error {
+	tx, _ := c.db.Begin()
+	query := "UPDATE expense SET category_codename=$1 WHERE category_codename=$2"
+	_, err := tx.Query(query, "other", codename)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	del_alias_query := "DELETE FROM alias WHERE category_codename=$1"
+	_, err = tx.Query(del_alias_query, codename)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	del_category_query := "DELETE FROM category WHERE codename=$1"
+	_, err = tx.Query(del_category_query, codename)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return nil
+}

@@ -16,6 +16,7 @@ type Expenses interface {
 type Category interface {
 	GetOne(string) (go_bot.Category, error)
 	GetAll() ([]go_bot.Category, error)
+	Delete(codename string) error
 }
 
 type Aliases interface {
