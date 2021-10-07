@@ -31,6 +31,7 @@ func (h *Handler) InitBotHandlers() {
 	h.bot.AddHandler("/expenses", h.GetExpensesStatistics)
 	h.bot.AddHandler("/category", h.GetCategoryByName)
 	h.bot.AddHandler("/del_category", h.DeleteCategory)
+	h.bot.AddHandler("/add_category", h.CreateCategory)
 	h.bot.AddHandler("/categories", h.GetCategories)
 	h.bot.AddHandler("/del", h.DeleteExpense)
 	h.bot.AddHandler("/del_alias", h.DeleteAlias)

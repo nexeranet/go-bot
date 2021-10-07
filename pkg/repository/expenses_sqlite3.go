@@ -65,7 +65,7 @@ func (e *ExpensesSqlite3) GetByTime(timeUnix int64) ([]go_bot.ExpenseWCN, error)
 }
 func (e *ExpensesSqlite3) GetByTimeByGroup(timeUnix int64) ([]go_bot.ExpenseWCN, error) {
 	var expenses []go_bot.ExpenseWCN
-	query := "SELECT id, SUM(amount) as sum, created, category_codename, name FROM expense INNER jOIN category on category.codename= expense.category_codename WHERE created >= $1 GROUP BY category_codename"
+	query := "SELECT id, SUM(amount) as sum, created, category_codename FROM expense INNER jOIN category on category.codename= expense.category_codename WHERE created >= $1 GROUP BY category_codename"
 	rows, err := e.db.Query(query, timeUnix)
 	if err != nil {
 		return expenses, err

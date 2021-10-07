@@ -42,6 +42,25 @@ func (h *Handler) GetCategories(update *tgbotapi.Update) {
 	h.bot.Send(msg, update)
 }
 
+func (h *Handler) CreateCategory(update *tgbotapi.Update) {
+	argString := update.Message.CommandArguments()
+	if argString == "" {
+		h.bot.Send("No arguments", update)
+		return
+	}
+	group := getParams(`(?P<Codename>[\w ]+) (?P<Name>.*)`, argString)
+	if group["Codename"] == "" || group["Name"] == "" {
+		h.bot.Send("Invalid arguments", update)
+		return
+	}
+	errs := h.repos.Category.Create(group["Codename"], group["Name"])
+	if errs != nil {
+		h.bot.Send(errs.Error(), update)
+		return
+	}
+	h.bot.Send("Категория создана", update)
+}
+
 func (h *Handler) DeleteCategory(update *tgbotapi.Update) {
 	argString := update.Message.CommandArguments()
 	if argString == "" {
@@ -49,7 +68,7 @@ func (h *Handler) DeleteCategory(update *tgbotapi.Update) {
 		return
 	}
 	group := getParams(`(?P<Codename>[\w ]*)`, argString)
-	if group["Codename"] == "" {
+	if group["Codename"] == "" || group["Codename"] == "other" {
 		h.bot.Send("Invalid arguments", update)
 		return
 	}

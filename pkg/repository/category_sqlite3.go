@@ -42,22 +42,81 @@ func (c *CategorySqlite3) GetAll() ([]go_bot.Category, error) {
 	}
 	return categories, nil
 }
+
+func (c *CategorySqlite3) Create(codename string, name string) error {
+	tx, err := c.db.Begin()
+	if err != nil {
+		return err
+	}
+	query := "INSERT INTO category (codename, name, is_base_expense) values ($1, $2, $3)"
+	statement, err := tx.Prepare(query)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = statement.Exec(codename, name, 0)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	insert_alias_query := "INSERT INTO alias (category_codename, text) values ($1, $2)"
+	statement, err = tx.Prepare(insert_alias_query)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = statement.Exec(codename, name)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return nil
+}
+
 func (c *CategorySqlite3) Delete(codename string) error {
-	tx, _ := c.db.Begin()
+	tx, err := c.db.Begin()
+	if err != nil {
+		return err
+	}
 	query := "UPDATE expense SET category_codename=$1 WHERE category_codename=$2"
-	_, err := tx.Query(query, "other", codename)
+	statement, err := tx.Prepare(query)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = statement.Exec("other", codename)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	del_alias_query := "DELETE FROM alias WHERE category_codename=$1"
-	_, err = tx.Query(del_alias_query, codename)
+	statement, err = tx.Prepare(del_alias_query)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = statement.Exec(codename)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	del_category_query := "DELETE FROM category WHERE codename=$1"
-	_, err = tx.Query(del_category_query, codename)
+	statement, err = tx.Prepare(del_category_query)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = statement.Exec(codename)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	err = tx.Commit()
 	if err != nil {
 		tx.Rollback()
 		return err

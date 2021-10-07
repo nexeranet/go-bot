@@ -17,6 +17,7 @@ type Category interface {
 	GetOne(string) (go_bot.Category, error)
 	GetAll() ([]go_bot.Category, error)
 	Delete(codename string) error
+	Create(codename string, name string) error
 }
 
 type Aliases interface {
