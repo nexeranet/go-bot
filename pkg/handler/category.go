@@ -13,7 +13,7 @@ func (h *Handler) GetCategoryByName(update *tgbotapi.Update) {
 		return
 	}
 	fmt.Printf("argString: %v\n", argString)
-	aliases, err := h.repos.Aliases.GetAllInGroup(argString)
+	aliases, err := h.repos.Aliases.GetAllInGroup(argString, update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 		return
@@ -26,7 +26,7 @@ func (h *Handler) GetCategoryByName(update *tgbotapi.Update) {
 	h.bot.Send(msg, update)
 }
 func (h *Handler) GetCategories(update *tgbotapi.Update) {
-	categories, err := h.repos.Aliases.GetAllByGroups()
+	categories, err := h.repos.Aliases.GetAllByGroups(update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 		return
@@ -53,7 +53,7 @@ func (h *Handler) CreateCategory(update *tgbotapi.Update) {
 		h.bot.Send("Invalid arguments", update)
 		return
 	}
-	errs := h.repos.Category.Create(group["Codename"], group["Name"])
+	errs := h.repos.Category.Create(group["Codename"], group["Name"], update.Message.Chat.ID)
 	if errs != nil {
 		h.bot.Send(errs.Error(), update)
 		return
@@ -72,7 +72,7 @@ func (h *Handler) DeleteCategory(update *tgbotapi.Update) {
 		h.bot.Send("Invalid arguments", update)
 		return
 	}
-	err := h.repos.Category.Delete(group["Codename"])
+	err := h.repos.Category.Delete(group["Codename"], update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 		return

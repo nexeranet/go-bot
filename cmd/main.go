@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"log"
 	"os"
-	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/joho/godotenv"
@@ -14,6 +13,7 @@ import (
 	"github.com/nexeranet/go-bot/pkg/repository"
 )
 
+// @TODO refactor my custom bot, make dependancy injection
 func main() {
 
 	err := godotenv.Load(".env")
@@ -43,18 +43,18 @@ func main() {
 	handl := handler.NewHandler(cBot, repos)
 	handl.InitBotHandlers()
 
-	userId := os.Getenv("TELEGRAM_ID")
-	id, err := strconv.ParseInt(userId, 10, 64)
-	if err != nil {
-		log.Panic("Error env TELEGRAM_ID empty or not number")
-	}
+	// userId := os.Getenv("TELEGRAM_ID")
+	// id, err := strconv.ParseInt(userId, 10, 64)
+	// if err != nil {
+	// log.Panic("Error env TELEGRAM_ID empty or not number")
+	// }
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message updates
 			continue
 		}
-		if update.Message.Chat.ID != id {
-			continue
-		}
+		// if update.Message.Chat.ID != id {
+		// continue
+		// }
 		err := cBot.Notify(&update)
 		if err != nil {
 			log.Panic("Notify failed")

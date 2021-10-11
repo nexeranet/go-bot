@@ -25,9 +25,14 @@ func NewHandler(bot *bot.Bot, repos *repository.Repository) *Handler {
 func (h *Handler) StartCommand(update *tgbotapi.Update) error {
 	err := h.CheckUser(update)
 	if err != nil {
-		err = h.repos.User.Create(update.Message.Chat.ID)
+		err := h.repos.User.Create(update.Message.Chat.ID)
 		if err != nil {
 			h.bot.Send(err.Error(), update)
+			return err
+		}
+		errs := h.repos.Category.Create("other", "прочее", update.Message.Chat.ID)
+		if errs != nil {
+			h.bot.Send(errs.Error(), update)
 			return err
 		}
 	}
@@ -62,6 +67,11 @@ func (h *Handler) RegisterUser(update *tgbotapi.Update) error {
 		err := h.repos.User.Create(update.Message.Chat.ID)
 		if err != nil {
 			h.bot.Send(err.Error(), update)
+			return err
+		}
+		errs := h.repos.Category.Create("other", "прочее", update.Message.Chat.ID)
+		if errs != nil {
+			h.bot.Send(errs.Error(), update)
 			return err
 		}
 	}

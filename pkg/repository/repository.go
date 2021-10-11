@@ -13,24 +13,24 @@ type User interface {
 
 type Expenses interface {
 	Create(category string, amount int, raw_text string, tg_id int64) (go_bot.Expense, error)
-	Delete(id int) error
+	Delete(id int, tg_id int64) error
 	GetByTime(timeUnix int64, tg_id int64) ([]go_bot.ExpenseWCN, error)
 	GetByTimeByGroup(timeUnix int64, tg_id int64) ([]go_bot.ExpenseWCN, error)
 }
 
 type Category interface {
-	GetOne(string) (go_bot.Category, error)
-	GetAll() ([]go_bot.Category, error)
-	Delete(codename string) error
-	Create(codename string, name string) error
+	GetOne(name string, tg_id int64) (go_bot.Category, error)
+	GetAll(tg_id int64) ([]go_bot.Category, error)
+	Delete(codename string, tg_id int64) error
+	Create(codename string, name string, tg_id int64) error
 }
 
 type Aliases interface {
-	GetOne(text string) (go_bot.Alias, error)
-	GetAllInGroup(codename string) ([]go_bot.Alias, error)
-	GetAllByGroups() ([]go_bot.AliasGroup, error)
-	Delete(id int) error
-	Create(codecame string, text string) error
+	GetOne(text string, tg_id int64) (go_bot.Alias, error)
+	GetAllInGroup(codename string, tg_id int64) ([]go_bot.Alias, error)
+	GetAllByGroups(tg_id int64) ([]go_bot.AliasGroup, error)
+	Delete(id int, tg_id int64) error
+	Create(codecame string, text string, tg_id int64) error
 }
 
 type Repository struct {

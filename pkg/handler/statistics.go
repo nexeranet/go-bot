@@ -20,6 +20,7 @@ func PrintStatistics(expeneses []go_bot.ExpenseWCN, title string, h *Handler, up
 	h.bot.Send(msg, update)
 }
 
+//@TODO add del command to respond
 func (h *Handler) GetExpensesStatistics(update *tgbotapi.Update) {
 	now := time.Now()
 	startDay := now.Add(-24 * time.Hour)
@@ -30,13 +31,12 @@ func (h *Handler) GetExpensesStatistics(update *tgbotapi.Update) {
 	sum := 0
 	msg := "Расходы за 24 часа:" + "\n\n"
 	for _, exp := range expeneses {
-		template := fmt.Sprintf("Категория: %s, сумма: %d \n", exp.CategoryName, exp.Amount)
+		template := fmt.Sprintf("Категория: %s, сумма: %d /del %d \n", exp.CategoryName, exp.Amount, exp.Id)
 		msg = fmt.Sprintf("%s%s", msg, template)
 		sum = sum + exp.Amount
 	}
 	msg = fmt.Sprintf("%s\nOбщая сумма: %d\n", msg, sum)
 	h.bot.Send(msg, update)
-	//PrintStatistics(expeneses, "Расходы за 24 часа:", h, update)
 }
 
 func (h *Handler) GetTodayStatistics(update *tgbotapi.Update) {

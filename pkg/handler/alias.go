@@ -17,12 +17,12 @@ func (h *Handler) CreateAlias(update *tgbotapi.Update) {
 		h.bot.Send("Invalid arguments", update)
 		return
 	}
-	_, err := h.repos.Category.GetOne(group["Codename"])
+	_, err := h.repos.Category.GetOne(group["Codename"], update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 		return
 	}
-	err = h.repos.Aliases.Create(group["Codename"], group["Text"])
+	err = h.repos.Aliases.Create(group["Codename"], group["Text"], update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 		return
@@ -42,7 +42,7 @@ func (h *Handler) DeleteAlias(update *tgbotapi.Update) {
 		h.bot.Send("Invalid arguments", update)
 		return
 	}
-	err = h.repos.Aliases.Delete(id)
+	err = h.repos.Aliases.Delete(id, update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 		return

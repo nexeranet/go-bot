@@ -31,13 +31,13 @@ func (e *ExpensesSqlite3) Create(category string, amount int, raw_text string, t
 	return expense, nil
 }
 
-func (e *ExpensesSqlite3) Delete(id int) error {
-	query := "DELETE FROM expense WHERE id=$1"
+func (e *ExpensesSqlite3) Delete(id int, tg_id int64) error {
+	query := "DELETE FROM expense WHERE id=$1 AND tg_id=$2"
 	statement, err := e.db.Prepare(query)
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(id)
+	_, err = statement.Exec(id, tg_id)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (e *ExpensesSqlite3) GetByTime(timeUnix int64, tg_id int64) ([]go_bot.Expen
 }
 func (e *ExpensesSqlite3) GetByTimeByGroup(timeUnix int64, tg_id int64) ([]go_bot.ExpenseWCN, error) {
 	var expenses []go_bot.ExpenseWCN
-	query := "SELECT id, SUM(amount) as sum, created, category_codename FROM expense INNER jOIN category on category.codename= expense.category_codename WHERE created >= $1 AND expense.tg_id=$2 GROUP BY category_codename"
+	query := "SELECT id, SUM(amount) as sum, created, category_codename, name FROM expense INNER jOIN category on category.codename= expense.category_codename WHERE created >= $1 AND expense.tg_id=$2 GROUP BY category_codename"
 	rows, err := e.db.Query(query, timeUnix, tg_id)
 	if err != nil {
 		return expenses, err

@@ -36,11 +36,11 @@ func (h *Handler) CreateExpense(update *tgbotapi.Update) {
 		h.bot.Send("Invalid arguments", update)
 		return
 	}
-	category, err := h.repos.Category.GetOne(group["Category"])
+	category, err := h.repos.Aliases.GetOne(group["Category"], update.Message.Chat.ID)
 	if err != nil {
-		category.Codename = "other"
+		category.CategoryCodename = "other"
 	}
-	_, errs := h.repos.Expenses.Create(category.Codename, amount, update.Message.Text, update.Message.Chat.ID)
+	_, errs := h.repos.Expenses.Create(category.CategoryCodename, amount, update.Message.Text, update.Message.Chat.ID)
 	if errs != nil {
 		h.bot.Send(errs.Error(), update)
 		return
@@ -61,7 +61,7 @@ func (h *Handler) DeleteExpense(update *tgbotapi.Update) {
 		h.bot.Send("Invalid arguments", update)
 		return
 	}
-	err = h.repos.Expenses.Delete(id)
+	err = h.repos.Expenses.Delete(id, update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 		return
