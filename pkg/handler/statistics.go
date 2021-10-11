@@ -23,7 +23,7 @@ func PrintStatistics(expeneses []go_bot.ExpenseWCN, title string, h *Handler, up
 func (h *Handler) GetExpensesStatistics(update *tgbotapi.Update) {
 	now := time.Now()
 	startDay := now.Add(-24 * time.Hour)
-	expeneses, err := h.repos.Expenses.GetByTime(startDay.Unix())
+	expeneses, err := h.repos.Expenses.GetByTime(startDay.Unix(), update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 	}
@@ -42,7 +42,7 @@ func (h *Handler) GetExpensesStatistics(update *tgbotapi.Update) {
 func (h *Handler) GetTodayStatistics(update *tgbotapi.Update) {
 	now := time.Now()
 	startDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	expeneses, err := h.repos.Expenses.GetByTimeByGroup(startDay.Unix())
+	expeneses, err := h.repos.Expenses.GetByTimeByGroup(startDay.Unix(), update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 	}
@@ -52,7 +52,7 @@ func (h *Handler) GetTodayStatistics(update *tgbotapi.Update) {
 func (h *Handler) GetMonthStatistics(update *tgbotapi.Update) {
 	now := time.Now()
 	startDay := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
-	expeneses, err := h.repos.Expenses.GetByTimeByGroup(startDay.Unix())
+	expeneses, err := h.repos.Expenses.GetByTimeByGroup(startDay.Unix(), update.Message.Chat.ID)
 	if err != nil {
 		h.bot.Send(err.Error(), update)
 	}

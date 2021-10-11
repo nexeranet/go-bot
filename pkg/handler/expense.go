@@ -40,12 +40,12 @@ func (h *Handler) CreateExpense(update *tgbotapi.Update) {
 	if err != nil {
 		category.Codename = "other"
 	}
-	_, errs := h.repos.Expenses.Create(category.Codename, amount, update.Message.Text)
+	_, errs := h.repos.Expenses.Create(category.Codename, amount, update.Message.Text, update.Message.Chat.ID)
 	if errs != nil {
 		h.bot.Send(errs.Error(), update)
 		return
 	}
-	h.bot.Send("Success", update)
+	h.bot.Send("Добавлено", update)
 }
 
 func (h *Handler) DeleteExpense(update *tgbotapi.Update) {

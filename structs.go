@@ -31,3 +31,7 @@ type ExpenseWCN struct {
 	CategoryCodename string `db:"category_codename"`
 	CategoryName     string `db:"category_name"`
 }
+type TgUser struct {
+	Id    int64
+	Tg_Id int64
+}

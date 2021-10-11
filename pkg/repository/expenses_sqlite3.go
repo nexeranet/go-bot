@@ -17,14 +17,14 @@ func NewExpensesSqlite3(db *sql.DB) *ExpensesSqlite3 {
 	}
 }
 
-func (e *ExpensesSqlite3) Create(category string, amount int, raw_text string) (go_bot.Expense, error) {
+func (e *ExpensesSqlite3) Create(category string, amount int, raw_text string, tg_id int64) (go_bot.Expense, error) {
 	var expense go_bot.Expense
-	query := "INSERT INTO expense (amount, created, category_codename, raw_text) values($1, $2, $3, $4)"
+	query := "INSERT INTO expense (amount, created, category_codename, raw_text, tg_id) values($1, $2, $3, $4, $5)"
 	statement, err := e.db.Prepare(query)
 	if err != nil {
 		return expense, err
 	}
-	_, err = statement.Exec(amount, time.Now().Unix(), category, raw_text)
+	_, err = statement.Exec(amount, time.Now().Unix(), category, raw_text, tg_id)
 	if err != nil {
 		return expense, err
 	}
@@ -44,10 +44,10 @@ func (e *ExpensesSqlite3) Delete(id int) error {
 	return nil
 }
 
-func (e *ExpensesSqlite3) GetByTime(timeUnix int64) ([]go_bot.ExpenseWCN, error) {
+func (e *ExpensesSqlite3) GetByTime(timeUnix int64, tg_id int64) ([]go_bot.ExpenseWCN, error) {
 	var expenses []go_bot.ExpenseWCN
-	query := "SELECT id, amount, created, category_codename, name FROM expense INNER JOIN category on expense.category_codename = category.codename WHERE created >= $1"
-	rows, err := e.db.Query(query, timeUnix)
+	query := "SELECT id, amount, created, category_codename, name FROM expense INNER JOIN category on expense.category_codename = category.codename WHERE created >= $1 AND expense.tg_id=$2"
+	rows, err := e.db.Query(query, timeUnix, tg_id)
 	if err != nil {
 		return expenses, err
 	}
@@ -63,10 +63,10 @@ func (e *ExpensesSqlite3) GetByTime(timeUnix int64) ([]go_bot.ExpenseWCN, error)
 	}
 	return expenses, nil
 }
-func (e *ExpensesSqlite3) GetByTimeByGroup(timeUnix int64) ([]go_bot.ExpenseWCN, error) {
+func (e *ExpensesSqlite3) GetByTimeByGroup(timeUnix int64, tg_id int64) ([]go_bot.ExpenseWCN, error) {
 	var expenses []go_bot.ExpenseWCN
-	query := "SELECT id, SUM(amount) as sum, created, category_codename FROM expense INNER jOIN category on category.codename= expense.category_codename WHERE created >= $1 GROUP BY category_codename"
-	rows, err := e.db.Query(query, timeUnix)
+	query := "SELECT id, SUM(amount) as sum, created, category_codename FROM expense INNER jOIN category on category.codename= expense.category_codename WHERE created >= $1 AND expense.tg_id=$2 GROUP BY category_codename"
+	rows, err := e.db.Query(query, timeUnix, tg_id)
 	if err != nil {
 		return expenses, err
 	}
