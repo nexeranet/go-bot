@@ -17,7 +17,7 @@ type Handler struct {
 	HandlerIntr
 	command   string
 	isCommand bool
-	callback  interface{}
+	callbacks []interface{}
 }
 
 func (h *Handler) Validate(update *tgbotapi.Update) bool {
@@ -32,13 +32,22 @@ func (h *Handler) Validate(update *tgbotapi.Update) bool {
 	//return valid
 }
 func (h *Handler) Notify(update *tgbotapi.Update) interface{} {
-	v := reflect.ValueOf(h.callback)
-	t := reflect.TypeOf(h.callback)
-	vargs := make([]reflect.Value, t.NumIn())
-	for key := range vargs {
-		vargs[key] = reflect.ValueOf(update)
+Loop:
+	for _, callback := range h.callbacks {
+		v := reflect.ValueOf(callback)
+		t := reflect.TypeOf(callback)
+		vargs := make([]reflect.Value, t.NumIn())
+		for key := range vargs {
+			vargs[key] = reflect.ValueOf(update)
+		}
+		values := v.Call(vargs)
+		for _, val := range values {
+			if !val.IsNil() {
+				break Loop
+			}
+		}
 	}
-	return v.Call(vargs)
+	return nil
 }
 func (h *Handler) Setup() {
 	h.isCommand = strings.HasPrefix(h.command, "/")

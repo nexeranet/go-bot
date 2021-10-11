@@ -28,10 +28,10 @@ func NewBot(bot *tgbotapi.BotAPI) *Bot {
 	}
 }
 
-func (s *Bot) AddHandler(command string, callback interface{}) {
+func (s *Bot) AddHandler(command string, callbacks ...interface{}) {
 	handler := &Handler{
 		command:   command,
-		callback:  callback,
+		callbacks: callbacks,
 		isCommand: false,
 	}
 	handler.Setup()
