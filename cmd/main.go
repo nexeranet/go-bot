@@ -13,7 +13,6 @@ import (
 	"github.com/nexeranet/go-bot/pkg/repository"
 )
 
-// @TODO refactor my custom bot, make dependancy injection
 func main() {
 
 	err := godotenv.Load(".env")
@@ -27,6 +26,9 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+	cBot := bot.NewBot(tgbot)
+	handl := handler.NewHandler(cBot, repos)
+	handl.InitBotHandlers()
 
 	tgbot.Debug = true
 
@@ -39,22 +41,10 @@ func main() {
 	if err != nil {
 		log.Panic("Error on Get Updates Chan")
 	}
-	cBot := bot.NewBot(tgbot)
-	handl := handler.NewHandler(cBot, repos)
-	handl.InitBotHandlers()
-
-	// userId := os.Getenv("TELEGRAM_ID")
-	// id, err := strconv.ParseInt(userId, 10, 64)
-	// if err != nil {
-	// log.Panic("Error env TELEGRAM_ID empty or not number")
-	// }
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message updates
 			continue
 		}
-		// if update.Message.Chat.ID != id {
-		// continue
-		// }
 		err := cBot.Notify(&update)
 		if err != nil {
 			log.Panic("Notify failed")

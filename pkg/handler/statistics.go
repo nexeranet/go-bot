@@ -20,7 +20,6 @@ func PrintStatistics(expeneses []go_bot.ExpenseWCN, title string, h *Handler, up
 	h.bot.Send(msg, update)
 }
 
-//@TODO add del command to respond
 func (h *Handler) GetExpensesStatistics(update *tgbotapi.Update) {
 	now := time.Now()
 	startDay := now.Add(-24 * time.Hour)

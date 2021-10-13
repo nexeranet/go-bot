@@ -3,6 +3,8 @@ package handler
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
@@ -52,6 +54,18 @@ func (h *Handler) CheckUser(update *tgbotapi.Update) error {
 	return nil
 }
 
+func (h *Handler) IsAdmin(update *tgbotapi.Update) error {
+	userId := os.Getenv("TELEGRAM_ID")
+	id, err := strconv.ParseInt(userId, 10, 64)
+	if err != nil {
+		return errors.New("Error env TELEGRAM_ID empty or not number")
+	}
+	if update.Message.Chat.ID != id {
+		return errors.New("You are not admin")
+	}
+	return nil
+}
+
 func (h *Handler) AuthGuard(update *tgbotapi.Update) error {
 	err := h.CheckUser(update)
 	if err != nil {
@@ -80,6 +94,10 @@ func (h *Handler) RegisterUser(update *tgbotapi.Update) error {
 }
 
 func (h *Handler) InitBotHandlers() {
+	h.bot.AddHandler("/admin", h.IsAdmin, func(update *tgbotapi.Update) error {
+		h.bot.Send("You are admin:)", update)
+		return nil
+	})
 	h.bot.AddHandler("/register", h.RegisterUser)
 	h.bot.AddHandler("/start", h.StartCommand)
 	h.bot.AddHandler("/today", h.AuthGuard, h.GetTodayStatistics)
